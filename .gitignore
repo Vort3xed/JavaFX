@@ -1,5 +1,2 @@
-/src/com/company/srtStuff/
-.idea
-*.iml
-*.class
-*.out
+/out/
+
