@@ -3,13 +3,16 @@ package com.company.MatrixAreaCalculator;
 //import wastelands
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -48,6 +51,17 @@ public class Main extends Application{
     Line greenToBlue = new Line();
     Line blueToRed = new Line();
 
+    Label identifier = new Label("Specific Coordinates: ");
+    Button submit = new Button("Submit");
+    Button clear = new Button("Clear");
+
+    TextField c1FieldX = new TextField();
+    TextField c2FieldX = new TextField();
+    TextField c3FieldX = new TextField();
+    TextField c1FieldY = new TextField();
+    TextField c2FieldY = new TextField();
+    TextField c3FieldY = new TextField();
+
 
     public static void main(String[] args) {
         //gotta make this mf wake up right?
@@ -63,16 +77,17 @@ public class Main extends Application{
         stage.setScene(scene);
         stage.setTitle("Triangle Area Calculator");
         scene.setFill(createGridPattern());
-        stage.setAlwaysOnTop(true);
         stage.setResizable(true);
         stage.show();
 
         //associating e to lambda function using mouse click event
         EventHandler<MouseEvent> handler = e -> handleEvent(e);
 
+
         //attaching click handlers for stage and scene
         stage.addEventHandler(MouseEvent.MOUSE_CLICKED, handler);
         scene.addEventHandler(MouseEvent.MOUSE_CLICKED, handler);
+
 
         c1.setFill(Color.RED);
         c2.setFill(Color.GREEN);
@@ -112,11 +127,119 @@ public class Main extends Application{
         angleAtBlue.setLayoutY(135);
         angleAtBlue.setTextFill(Color.BLUE);
 
+        identifier.setFont(Font.font(18));
+        identifier.setLayoutX(450);
+        identifier.setLayoutY(5);
+
+        c1FieldX.setPromptText("Red Circle X");
+        c1FieldX.setFocusTraversable(false);
+        c1FieldX.setLayoutX(450);
+        c1FieldX.setLayoutY(35);
+        c1FieldX.getText();
+
+        c2FieldX.setPromptText("Green Circle X");
+        c2FieldX.setFocusTraversable(false);
+        c2FieldX.setLayoutX(450);
+        c2FieldX.setLayoutY(65);
+        c2FieldX.getText();
+
+        c3FieldX.setPromptText("Blue Circle X");
+        c3FieldX.setFocusTraversable(false);
+        c3FieldX.setLayoutX(450);
+        c3FieldX.setLayoutY(95);
+        c3FieldX.getText();
+
+        c1FieldY.setPromptText("Red Circle Y");
+        c1FieldY.setFocusTraversable(false);
+        c1FieldY.setLayoutX(610);
+        c1FieldY.setLayoutY(35);
+        c1FieldY.getText();
+
+        c2FieldY.setPromptText("Green Circle Y");
+        c2FieldY.setFocusTraversable(false);
+        c2FieldY.setLayoutX(610);
+        c2FieldY.setLayoutY(65);
+        c2FieldY.getText();
+
+        c3FieldY.setPromptText("Blue Circle Y");
+        c3FieldY.setFocusTraversable(false);
+        c3FieldY.setLayoutX(610);
+        c3FieldY.setLayoutY(95);
+        c3FieldY.getText();
+
+        submit.setLayoutX(450);
+        submit.setLayoutY(130);
+        clear.setLayoutX(510);
+        clear.setLayoutY(130);
+
+
         //appending all nodes to group
         g.getChildren().addAll(
-                c1,c2,c3,areaLabel,DistanceRtG,DistanceGtB,DistanceBtR,angleAtRed,angleAtGreen,angleAtBlue,redToGreen,greenToBlue,blueToRed);
+                c1,c2,c3,areaLabel,DistanceRtG,DistanceGtB,DistanceBtR,angleAtRed,
+                angleAtGreen,angleAtBlue,redToGreen,greenToBlue,blueToRed,identifier,
+                submit,clear,c1FieldX,c2FieldX,c3FieldX,c1FieldY,c2FieldY,c3FieldY);
 
+
+        submit.setOnAction(this::handleSubmitAction);
+        clear.setOnAction(this::handleClearAction);
     }
+
+    public void handleSubmitAction(ActionEvent event){
+        try{
+            if (!c1FieldX.getText().isEmpty() && !c2FieldX.getText().isEmpty() && !c3FieldX.getText().isEmpty()
+                    && !c1FieldY.getText().isEmpty() && !c2FieldY.getText().isEmpty() && !c3FieldY.getText().isEmpty()) {
+
+                identifier.setText("Specific Coordinates: (Parsed)");
+                c1.setLayoutX(Double.parseDouble(c1FieldX.getText()));
+                c1.setLayoutY(Double.parseDouble(c1FieldY.getText()));
+
+                c2.setLayoutX(Double.parseDouble(c2FieldX.getText()));
+                c2.setLayoutY(Double.parseDouble(c2FieldY.getText()));
+
+                c3.setLayoutX(Double.parseDouble(c3FieldX.getText()));
+                c3.setLayoutY(Double.parseDouble(c3FieldY.getText()));
+
+                redToGreen.setStartX(c1.getLayoutX());
+                redToGreen.setStartY(c1.getLayoutY());
+                redToGreen.setEndX(c2.getLayoutX());
+                redToGreen.setEndY(c2.getLayoutY());
+
+                greenToBlue.setStartX(c2.getLayoutX());
+                greenToBlue.setStartY(c2.getLayoutY());
+                greenToBlue.setEndX(c3.getLayoutX());
+                greenToBlue.setEndY(c3.getLayoutY());
+
+                blueToRed.setStartX(c3.getLayoutX());
+                blueToRed.setStartY(c3.getLayoutY());
+                blueToRed.setEndX(c1.getLayoutX());
+                blueToRed.setEndY(c1.getLayoutY());
+
+                handleCalculations(c1, c2, c3);
+            } else {
+                identifier.setText("Specific Coordinates: (Parse Failed)");
+                c1.setLayoutX(c1.getLayoutX());
+                c1.setLayoutY(c1.getLayoutY());
+
+                c2.setLayoutX(c2.getLayoutX());
+                c2.setLayoutY(c2.getLayoutY());
+
+                c3.setLayoutX(c3.getLayoutX());
+                c3.setLayoutY(c3.getLayoutY());
+            }
+        } catch (Exception p){
+            identifier.setText("Specific Coordinates: (Non-Float Values!)");
+        }
+    }
+    public void handleClearAction(ActionEvent event){
+        c1FieldX.clear();
+        c2FieldX.clear();
+        c3FieldX.clear();
+        c1FieldY.clear();
+        c2FieldY.clear();
+        c3FieldY.clear();
+        identifier.setText("Specific Coordinates: ");
+    }
+
     public ImagePattern createGridPattern() {
 
         //square 1 generation
