@@ -1,4 +1,4 @@
-package com.company.MatrixAreaCalculator;
+package com.company.TriangleCalculator;
 
 //import wastelands
 
